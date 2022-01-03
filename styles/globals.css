@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --light-top: inset 0px 2px 0px rgba(255, 255, 255, 0.25);
+    --light-left: inset 2px 0px 0px rgba(255, 255, 255, 0.25);
+    --shade-bottom: inset -0px -2px 0px rgba(0, 0, 0, 0.25);
+    --shade-right: inset -2px 0px 0px rgba(0, 0, 0, 0.25);
+    --inner-top: inset 0px 3px 0px rgba(122, 100, 66, 0.3);
+    --inner-left: inset 3px 0px 0px rgba(122, 100, 66, 0.3);
+  }
+
+  html,
+  body {
+    @apply font-amethysta bg-champagne-500 m-0 p-0;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+}

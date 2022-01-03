@@ -1,0 +1,18 @@
+.endAnimation {
+  animation: toggleBlink 1s infinite;
+}
+
+@keyframes toggleBlink {
+  0% {
+    @apply bg-anthracite-500;
+  }
+  49% {
+    @apply bg-anthracite-500;
+  }
+  50% {
+    @apply bg-blue-500;
+  }
+  100% {
+    @apply bg-blue-500;
+  }
+}
