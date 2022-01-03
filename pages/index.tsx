@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { useEffect, useState } from "react";
 React.useLayoutEffect = React.useEffect;
-
+import { useRouter } from "next/router";
 import { GetStaticProps } from "next";
 import type { NextPage } from "next";
 
@@ -15,13 +15,12 @@ import { numberBetween, setMarkerColor } from "@/lib/utils";
 
 import { Ipieces } from "@/types/pieces";
 import { Islots } from "@/types/slots";
-import { MessageList } from "@/types/misc";
 
 import { IdragUpdate, Icoords, IDomRect } from "@/types/drag";
 
-import { puzzleSlots, puzzlePieces, puzzleEndMessage } from "@/datas";
+import { puzzleSlots, puzzlePieces } from "@/datas";
 
-import { Puzzle, DragZone, EndMessage } from "@/components/puzzle";
+import { Puzzle, DragZone } from "@/components/puzzle";
 
 import lottieJson from "@/assets/animations/sparks.json";
 
@@ -47,21 +46,23 @@ const checkInDropBoundaries = (
 interface Props {
   slots: Islots;
   piecesCollection: Ipieces[];
-  endMessage: MessageList;
 }
 
-const Home: NextPage<Props> = ({ slots, piecesCollection, endMessage }) => {
+const Home: NextPage<Props> = ({ slots, piecesCollection }) => {
   const [pieces, setPieces] = useState<Ipieces[] | null>(null);
   const [unitSize, setUnitSize] = useState({ unit: "px", size: "0" });
+  const [dropZonesDOMRects, setdropZonesDOMRects] = useState<any | null>(null);
   const [isHoverItsDropzone, setIsHoverItsDropzone] = useState(false);
   const [isPuzzleComplete, setIsPuzzleComplete] = useState(false);
+
+  const router = useRouter();
+
+  const isDesktop = useMediaQuery("(min-width: 640px)");
+  const { width } = useWindowSize();
 
   useEffect(() => {
     setPieces(piecesCollection);
   }, [piecesCollection]);
-
-  const isDesktop = useMediaQuery("(min-width: 640px)");
-  const { width } = useWindowSize();
 
   useEffect(() => {
     setUnitSize(
@@ -69,7 +70,17 @@ const Home: NextPage<Props> = ({ slots, piecesCollection, endMessage }) => {
     );
   }, [isDesktop]);
 
-  const [dropZonesDOMRects, setdropZonesDOMRects] = useState<any | null>(null);
+  useEffect(() => {
+    if (pieces) {
+      const isAllPiecesPositionned = pieces.every(
+        (piece: Ipieces) => piece.isPositionned === true
+      );
+
+      if (isAllPiecesPositionned) {
+        setIsPuzzleComplete(true);
+      }
+    }
+  }, [pieces]);
 
   const handledropZonesDOMRects = (zoneBoundingArea: {
     [key: string]: IDomRect;
@@ -89,16 +100,14 @@ const Home: NextPage<Props> = ({ slots, piecesCollection, endMessage }) => {
     );
 
     switch (action) {
-      case "update":
+      case "onDrag":
         if (isInDropBoundaries) {
-          console.log("isInDropBoundaries");
           setIsHoverItsDropzone(true);
         } else {
-          console.log("NOT isInDropBoundaries");
           setIsHoverItsDropzone(false);
         }
         break;
-      case "end":
+      case "onDragEnd":
         if (isInDropBoundaries) {
           setIsHoverItsDropzone(false);
           setPieces((prev: any) => {
@@ -111,17 +120,9 @@ const Home: NextPage<Props> = ({ slots, piecesCollection, endMessage }) => {
     }
   };
 
-  useEffect(() => {
-    if (pieces) {
-      const isAllPiecesPositionned = pieces.every(
-        (piece: Ipieces) => piece.isPositionned === true
-      );
-
-      if (isAllPiecesPositionned) {
-        setIsPuzzleComplete(true);
-      }
-    }
-  }, [pieces]);
+  const handleResetPuzzle = () => {
+    router.reload();
+  };
 
   return (
     <Div100vh className="overflow-hidden">
@@ -132,13 +133,11 @@ const Home: NextPage<Props> = ({ slots, piecesCollection, endMessage }) => {
       >
         {pieces && (
           <Puzzle isPuzzleComplete={isPuzzleComplete}>
-            {/* EndLottieAnimation */}
             {isPuzzleComplete && (
               <motion.div
                 id="lottie"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 3 }}
                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200vw] h-[200vw] md:w-[800px] md:h-[800px]"
               >
                 <Lottie
@@ -201,7 +200,8 @@ const Home: NextPage<Props> = ({ slots, piecesCollection, endMessage }) => {
                             isPuzzleComplete={isPuzzleComplete}
                             id={pieceItemData?.id}
                             width={width}
-                            isDisplayed={pieceItemData.isPositionned === true}
+                            // isDisplayed={pieceItemData.isPositionned === true}
+                            isDisplayed={isPuzzleComplete}
                             isHoverItsDropzone={isHoverItsDropzone}
                             handledropZonesDOMRects={handledropZonesDOMRects}
                             piece={pieceItemData as Ipieces}
@@ -215,7 +215,7 @@ const Home: NextPage<Props> = ({ slots, piecesCollection, endMessage }) => {
             })}
 
             {/* Floating pieces */}
-            {/* {pieces.map((piece, i) => {
+            {pieces.map((piece, i) => {
               return (
                 <DragZone
                   key={`start-${i}`}
@@ -227,29 +227,43 @@ const Home: NextPage<Props> = ({ slots, piecesCollection, endMessage }) => {
                   isPuzzleComplete={isPuzzleComplete}
                   id={piece.id}
                   coords={piece.coords}
-                  isDisplayed={piece.isPositionned === false}
+                  // isDisplayed={piece.isPositionned === false}
+                  isDisplayed={!isPuzzleComplete}
                   isHoverItsDropzone={isHoverItsDropzone}
                   handleOnDrag={handleOnDrag}
                 />
               );
-            })} */}
-            <div className="absolute bottom-[-30%] -translate-x-1/2 left-1/2 w-2/3 space-y-4 flex flex-col justify-center">
-              <p className="text-3xl text-center ">Well done!</p>
+            })}
 
-              <button className="mx-auto text-lg text-white duration-150 ease-out rounded shadow  bg-magenta-500 hover:bg-magenta-700">
-                <div className="px-6 py-2 w-full-h-full shadow-lt">Restart</div>
-              </button>
-            </div>
+            {/* Completion block */}
+            {isPuzzleComplete && (
+              <motion.div
+                initial={{ opacity: 0, y: '250%', x: "-50%" }}
+                animate={{ opacity: 1, y: "150%", x: "-50%" }}
+                transition={{ delay: 2 }}
+                id="completionBlock"
+                className="absolute left-1/2 -translate-x-1/2 bottom-0  w-[100vw] md:w-2/3 space-y-4 flex flex-col justify-center z-40"
+              >
+
+                <p className="text-4xl text-center md:text-3xl">Well done!</p>
+                <button className="mx-auto text-lg text-white duration-150 ease-out rounded shadow bg-magenta-500 hover:bg-magenta-700">
+                  <div
+                    onClick={() => handleResetPuzzle()}
+                    className="px-6 py-2 text-2xl w-full-h-full shadow-lt"
+                  >
+                    Restart
+                  </div>
+                </button>
+              </motion.div>
+            )}
           </Puzzle>
         )}
 
-        {/* EndMessage */}
-
-        {isPuzzleComplete && (
-          <div id="endMessage" className="relative top-[-10%]">
-            <EndMessage textDatas={endMessage} />
-          </div>
-        )}
+        {/* Helper */}
+        <button
+          onClick={() => setIsPuzzleComplete(true)}
+          className="absolute top-0 left-0 w-10 h-10 bg-red-500"
+        ></button>
       </main>
     </Div100vh>
   );
@@ -262,7 +276,6 @@ export const getStaticProps: GetStaticProps = async () => {
     props: {
       piecesCollection: puzzlePieces,
       slots: puzzleSlots,
-      endMessage: puzzleEndMessage,
     },
   };
 };

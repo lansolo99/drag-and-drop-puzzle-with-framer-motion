@@ -15,9 +15,8 @@ const Puzzle: React.FC<Props> = ({ isPuzzleComplete, children }) => {
     },
     complete: {
       opacity: 1,
-      scale: 0.4,
-      x: "40%",
-      y: "40%",
+      scale: 0.8,
+      y: "-10%",
       transition: {
         delay: 1,
         type: "tween",
@@ -29,7 +28,6 @@ const Puzzle: React.FC<Props> = ({ isPuzzleComplete, children }) => {
 
   return (
     <motion.div
-      id="puzzleWrapper"
       variants={puzzleVariant}
       initial="hidden"
       animate={!isPuzzleComplete ? "show" : "complete"}

@@ -4,7 +4,7 @@ export interface Icoords {
 }
 
 export interface IdragUpdate {
-  action: "update" | "end";
+  action: "onDrag" | "onDragEnd";
   index: number;
   id: string;
   draggableCoords: Icoords;

@@ -82,13 +82,14 @@ const DragZone = ({
           className={clsx(
             `z-20 grid`,
             { "relative z-[9999]": isDragging },
-            { "cursor-move": !isDropZone }
+            { "cursor-grab": !isDropZone }
           )}
           style={{
             gridTemplateColumns: `repeat(${piece.layout.grid[0]}, 1fr)`,
             gridTemplateRows: `repeat(${piece.layout.grid[1]}, 1fr)`,
           }}
           drag={!isDropZone ? true : false}
+          whileTap={{cursor: "grabbing"}}
           layoutId={`box-${id}`}
           initial={false}
           dragTransition={{
@@ -102,7 +103,7 @@ const DragZone = ({
               setIsDragging(true);
 
               handleOnDrag({
-                action: "update",
+                action: "onDrag",
                 id: id,
                 index: index,
                 draggableCoords: { x: info.point.x, y: info.point.y },
@@ -110,12 +111,11 @@ const DragZone = ({
             }
           }}
           onDragEnd={(_, info) => {
-            console.log("dragEnd");
             setIsDragging(false);
 
             if (handleOnDrag)
               handleOnDrag({
-                action: "end",
+                action: "onDragEnd",
                 id: id,
                 index: index,
                 draggableCoords: { x: info.point.x, y: info.point.y },
