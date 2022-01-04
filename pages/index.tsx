@@ -177,7 +177,6 @@ const Home: NextPage<Props> = ({ slots, piecesCollection }) => {
                             id={pieceItemData?.id}
                             width={width}
                             isDisplayed={pieceItemData.isPositionned === true}
-                            // isDisplayed={isPuzzleComplete}
                             isHoverItsDropzone={isHoverItsDropzone}
                             handleDropZonesDOMRects={handleDropZonesDOMRects}
                             piece={pieceItemData as Ipieces}
@@ -204,7 +203,6 @@ const Home: NextPage<Props> = ({ slots, piecesCollection }) => {
                   id={piece.id}
                   coords={piece.coords}
                   isDisplayed={piece.isPositionned === false}
-                  // isDisplayed={!isPuzzleComplete}
                   isHoverItsDropzone={isHoverItsDropzone}
                   handleOnDrag={handleOnDrag}
                 />
@@ -220,7 +218,6 @@ const Home: NextPage<Props> = ({ slots, piecesCollection }) => {
 
         {/* Finish puzzle helper */}
         <button
-          // onClick={() => setIsPuzzleComplete(true)}
           onClick={() => handleSetPuzzleFinished()}
           disabled={isPuzzleComplete}
           className={clsx(
