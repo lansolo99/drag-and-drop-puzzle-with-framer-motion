@@ -6,9 +6,7 @@ import { GetStaticProps } from "next";
 import type { NextPage } from "next";
 
 import clsx from "clsx";
-import { motion } from "framer-motion";
 import { useMediaQuery, useWindowSize } from "usehooks-ts";
-import Lottie from "react-lottie-player";
 import Div100vh from "react-div-100vh";
 
 import { isCoordsInDropBoundaries } from "@/lib/utils";
@@ -25,9 +23,8 @@ import {
   DragZone,
   DragZoneMarker,
   PuzzleCompleteBlock,
+  PuzzleCompleteBackAnimation,
 } from "@/components/puzzle";
-
-import lottieJson from "@/assets/animations/sparks.json";
 
 interface Props {
   slots: Islots;
@@ -119,21 +116,8 @@ const Home: NextPage<Props> = ({ slots, piecesCollection }) => {
       >
         {pieces && (
           <Puzzle isPuzzleComplete={isPuzzleComplete}>
-            {isPuzzleComplete && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200vw] h-[200vw] md:w-[800px] md:h-[800px]"
-              >
-                <Lottie
-                  play
-                  loop={true}
-                  speed={2}
-                  animationData={lottieJson}
-                  style={{ width: "100%", height: "100%" }}
-                />
-              </motion.div>
-            )}
+            {/* Lottie back animation */}
+            {isPuzzleComplete && <PuzzleCompleteBackAnimation />}
 
             {/* Slots */}
             {slots.layout.rows.map((row, i) => {
@@ -180,8 +164,8 @@ const Home: NextPage<Props> = ({ slots, piecesCollection }) => {
                             isPuzzleComplete={isPuzzleComplete}
                             id={pieceItemData?.id}
                             width={width}
-                            isDisplayed={pieceItemData.isPositionned === true}
-                            // isDisplayed={isPuzzleComplete}
+                            // isDisplayed={pieceItemData.isPositionned === true}
+                            isDisplayed={isPuzzleComplete}
                             isHoverItsDropzone={isHoverItsDropzone}
                             handleDropZonesDOMRects={handleDropZonesDOMRects}
                             piece={pieceItemData as Ipieces}
@@ -207,8 +191,8 @@ const Home: NextPage<Props> = ({ slots, piecesCollection }) => {
                   isPuzzleComplete={isPuzzleComplete}
                   id={piece.id}
                   coords={piece.coords}
-                  isDisplayed={piece.isPositionned === false}
-                  // isDisplayed={!isPuzzleComplete}
+                  // isDisplayed={piece.isPositionned === false}
+                  isDisplayed={!isPuzzleComplete}
                   isHoverItsDropzone={isHoverItsDropzone}
                   handleOnDrag={handleOnDrag}
                 />
