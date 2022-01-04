@@ -206,11 +206,31 @@ const Home: NextPage<Props> = ({ slots, piecesCollection }) => {
           </Puzzle>
         )}
 
-        {/* Helper */}
+        {/* Finish puzzle helper */}
         <button
           onClick={() => setIsPuzzleComplete(true)}
-          className="absolute top-0 left-0 w-10 h-10 bg-red-500"
-        ></button>
+          disabled={isPuzzleComplete}
+          className={clsx(
+            "absolute p-[6px] top-[5px] left-[5px] shadow rounded-sm flex items-center justify-center w-8 h-8 text-white bg-magenta-500 duration-100 transition fill-current",
+            { "hover:bg-magenta-700 ": !isPuzzleComplete },
+            { "opacity-50": isPuzzleComplete }
+          )}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-6 h-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M13 5l7 7-7 7M5 5l7 7-7 7"
+            />
+          </svg>
+        </button>
       </main>
     </Div100vh>
   );
