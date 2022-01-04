@@ -8,3 +8,6 @@ deployed on Vercel.
 Based on [Dwi Ash's Dribbble](https://dribbble.com/shots/13373054-Dogzzle) for
 the design part, and [Mat Pery's CodeSandbox](https://codesandbox.io/s/5trtt) as
 development
+
+[Lottie file](https://lottiefiles.com/70550-confetti-explode) from Anish
+Hirlekar.

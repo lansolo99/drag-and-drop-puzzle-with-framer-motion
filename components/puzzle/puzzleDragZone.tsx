@@ -6,8 +6,6 @@ import { motion } from "framer-motion";
 import { IdragUpdate, IDomRect } from "@/types/drag";
 import { Ipieces } from "@/types/pieces";
 
-import { setMarkerColor } from "@/lib/utils";
-
 import { DragZoneMarker } from "@/components/puzzle";
 
 import styles from "@/styles/dragZone.module.css";
