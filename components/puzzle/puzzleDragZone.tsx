@@ -8,6 +8,8 @@ import { Ipieces } from "@/types/pieces";
 
 import { setMarkerColor } from "@/lib/utils";
 
+import { DragZoneMarker } from "@/components/puzzle";
+
 import styles from "@/styles/dragZone.module.css";
 
 interface Props {
@@ -89,7 +91,7 @@ const DragZone = ({
             gridTemplateRows: `repeat(${piece.layout.grid[1]}, 1fr)`,
           }}
           drag={!isDropZone ? true : false}
-          whileTap={{cursor: "grabbing"}}
+          whileTap={{ cursor: "grabbing" }}
           layoutId={`box-${id}`}
           initial={false}
           dragTransition={{
@@ -142,6 +144,7 @@ const DragZone = ({
               >
                 {/* Piece marker? */}
                 {unit.includes("marker") && !isDropZone && (
+                  // <DragZoneMarker unit={unit} />
                   <div className="absolute shadow-inner w-[1.15vw] md:w-[6px] md:h-[6px] h-[1.15vw] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                     <div
                       className="relative w-full h-full rounded-sm shadow"

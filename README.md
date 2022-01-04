@@ -1,5 +1,7 @@
 # Drag and drop puzzle built using Framer Motion
 
-[Demo](...)
+[Live demo](...)
 
-My personal website/portfolio/blog. Written with Next.js/Typescript and deployed on Vercel. Book data fetched from Notion and prerendered with next's getinitialprops ✨
+Mini puzzle game written with Next.js/Typescript, using Framer-motion and deployed on Vercel.
+
+Based on [Dwi Ash's Dribbble](https://dribbble.com/shots/13373054-Dogzzle) for the design part, and [Mat Pery's CodeSandbox](https://codesandbox.io/s/5trtt) as development

@@ -11,37 +11,18 @@ import { useMediaQuery, useWindowSize } from "usehooks-ts";
 import Lottie from "react-lottie-player";
 import Div100vh from "react-div-100vh";
 
-import { numberBetween, setMarkerColor } from "@/lib/utils";
+import { setMarkerColor, isCoordsInDropBoundaries } from "@/lib/utils";
 
 import { Ipieces } from "@/types/pieces";
 import { Islots } from "@/types/slots";
 
-import { IdragUpdate, Icoords, IDomRect } from "@/types/drag";
+import { IdragUpdate, IDomRect } from "@/types/drag";
 
 import { puzzleSlots, puzzlePieces } from "@/datas";
 
-import { Puzzle, DragZone } from "@/components/puzzle";
+import { Puzzle, DragZone, DragZoneMarker } from "@/components/puzzle";
 
 import lottieJson from "@/assets/animations/sparks.json";
-
-const checkInDropBoundaries = (
-  draggableCoords: Icoords,
-  dropZonesDOMRect: IDomRect
-) => {
-  const isDraggedXInRange = numberBetween(
-    draggableCoords.x,
-    dropZonesDOMRect.left,
-    dropZonesDOMRect.right
-  );
-
-  const isDraggedYInRange = numberBetween(
-    draggableCoords.y,
-    dropZonesDOMRect.top,
-    dropZonesDOMRect.bottom
-  );
-
-  return isDraggedXInRange && isDraggedYInRange;
-};
 
 interface Props {
   slots: Islots;
@@ -94,21 +75,21 @@ const Home: NextPage<Props> = ({ slots, piecesCollection }) => {
     index,
     draggableCoords,
   }: IdragUpdate) => {
-    const isInDropBoundaries = checkInDropBoundaries(
+    const isInDropzoneBoundaries = isCoordsInDropBoundaries(
       draggableCoords,
       dropZonesDOMRects[id]
     );
 
     switch (action) {
       case "onDrag":
-        if (isInDropBoundaries) {
+        if (isInDropzoneBoundaries) {
           setIsHoverItsDropzone(true);
         } else {
           setIsHoverItsDropzone(false);
         }
         break;
       case "onDragEnd":
-        if (isInDropBoundaries) {
+        if (isInDropzoneBoundaries) {
           setIsHoverItsDropzone(false);
           setPieces((prev: any) => {
             const newPieces = [...prev];
@@ -182,12 +163,7 @@ const Home: NextPage<Props> = ({ slots, piecesCollection }) => {
                       >
                         {/* Slot marker? */}
                         {unit.includes("marker") && (
-                          <div
-                            className="absolute rounded-sm shadow w-[1.15vw] md:w-[7px] md:h-[7px] h-[1.15vw] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-                            style={{
-                              backgroundColor: `${setMarkerColor(unit)}`,
-                            }}
-                          ></div>
+                          <DragZoneMarker unit={unit} />
                         )}
 
                         {/* Positionned dragzone? */}
@@ -200,8 +176,8 @@ const Home: NextPage<Props> = ({ slots, piecesCollection }) => {
                             isPuzzleComplete={isPuzzleComplete}
                             id={pieceItemData?.id}
                             width={width}
-                            // isDisplayed={pieceItemData.isPositionned === true}
-                            isDisplayed={isPuzzleComplete}
+                            isDisplayed={pieceItemData.isPositionned === true}
+                            // isDisplayed={isPuzzleComplete}
                             isHoverItsDropzone={isHoverItsDropzone}
                             handledropZonesDOMRects={handledropZonesDOMRects}
                             piece={pieceItemData as Ipieces}
@@ -227,8 +203,8 @@ const Home: NextPage<Props> = ({ slots, piecesCollection }) => {
                   isPuzzleComplete={isPuzzleComplete}
                   id={piece.id}
                   coords={piece.coords}
-                  // isDisplayed={piece.isPositionned === false}
-                  isDisplayed={!isPuzzleComplete}
+                  isDisplayed={piece.isPositionned === false}
+                  // isDisplayed={!isPuzzleComplete}
                   isHoverItsDropzone={isHoverItsDropzone}
                   handleOnDrag={handleOnDrag}
                 />
@@ -238,13 +214,12 @@ const Home: NextPage<Props> = ({ slots, piecesCollection }) => {
             {/* Completion block */}
             {isPuzzleComplete && (
               <motion.div
-                initial={{ opacity: 0, y: '250%', x: "-50%" }}
+                initial={{ opacity: 0, y: "250%", x: "-50%" }}
                 animate={{ opacity: 1, y: "150%", x: "-50%" }}
                 transition={{ delay: 2 }}
                 id="completionBlock"
                 className="absolute left-1/2 -translate-x-1/2 bottom-0  w-[100vw] md:w-2/3 space-y-4 flex flex-col justify-center z-40"
               >
-
                 <p className="text-4xl text-center md:text-3xl">Well done!</p>
                 <button className="mx-auto text-lg text-white duration-150 ease-out rounded shadow bg-magenta-500 hover:bg-magenta-700">
                   <div
