@@ -24,7 +24,7 @@ interface Props {
   isDisplayed: boolean;
   isHoverItsDropzone: boolean;
   handleOnDrag?: (dragUpdate: IdragUpdate) => void;
-  handledropZonesDOMRects?: (zoneBoundingArea: {
+  handleDropZonesDOMRects?: (zoneBoundingArea: {
     [x: string]: IDomRect;
   }) => void;
 }
@@ -41,7 +41,7 @@ const DragZone = ({
   isHoverItsDropzone,
   isDropZone,
   handleOnDrag,
-  handledropZonesDOMRects,
+  handleDropZonesDOMRects,
 }: Props) => {
   const zoneRefWidth = Number(piece.layout.grid[0]) * Number(unitSize.size);
   const zoneRefHeight = Number(piece.layout.grid[1]) * Number(unitSize.size);
@@ -51,8 +51,8 @@ const DragZone = ({
 
   useEffect(() => {
     const zoneRefEl = zoneRef.current;
-    if (zoneRefEl && handledropZonesDOMRects) {
-      handledropZonesDOMRects({
+    if (zoneRefEl && handleDropZonesDOMRects) {
+      handleDropZonesDOMRects({
         [id]: {
           top: zoneRefEl.getBoundingClientRect().top + window.scrollY,
           left: zoneRefEl.getBoundingClientRect().left,
@@ -142,15 +142,9 @@ const DragZone = ({
                   height: `${unitSize.size}${unitSize.unit}`,
                 }}
               >
-                {/* Piece marker? */}
+                {/* Marker? */}
                 {unit.includes("marker") && !isDropZone && (
-                  // <DragZoneMarker unit={unit} />
-                  <div className="absolute shadow-inner w-[1.15vw] md:w-[6px] md:h-[6px] h-[1.15vw] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                    <div
-                      className="relative w-full h-full rounded-sm shadow"
-                      style={{ backgroundColor: `${setMarkerColor(unit)}` }}
-                    ></div>
-                  </div>
+                  <DragZoneMarker context="drag" unit={unit} />
                 )}
               </div>
             );

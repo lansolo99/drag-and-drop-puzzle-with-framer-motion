@@ -1,17 +1,28 @@
+import clsx from "clsx";
 import { setMarkerColor } from "@/lib/utils";
 
 interface Props {
+  context: "drag" | "drop";
   unit: string;
 }
 
-const PuzzleDragzoneMarker = ({ unit }: Props) => {
+const PuzzleDragzoneMarker = ({ context, unit }: Props) => {
   return (
     <div
-      className="absolute rounded-sm shadow w-[1.15vw] md:w-[7px] md:h-[7px] h-[1.15vw] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+      className={clsx(
+        "absolute w-[1.2vw] h-[1.2vw] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-sm",
+        { " md:w-[6px] md:h-[6px]": context === "drag" },
+        { "md:w-[7px] md:h-[7px]": context === "drop" }
+      )}
       style={{
         backgroundColor: `${setMarkerColor(unit)}`,
       }}
-    ></div>
+    >
+      <div
+        className="relative w-full h-full rounded-sm shadow"
+        style={{ backgroundColor: `${setMarkerColor(unit)}` }}
+      ></div>
+    </div>
   );
 };
 

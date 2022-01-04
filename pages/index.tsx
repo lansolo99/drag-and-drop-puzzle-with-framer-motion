@@ -11,7 +11,7 @@ import { useMediaQuery, useWindowSize } from "usehooks-ts";
 import Lottie from "react-lottie-player";
 import Div100vh from "react-div-100vh";
 
-import { setMarkerColor, isCoordsInDropBoundaries } from "@/lib/utils";
+import { isCoordsInDropBoundaries } from "@/lib/utils";
 
 import { Ipieces } from "@/types/pieces";
 import { Islots } from "@/types/slots";
@@ -20,7 +20,12 @@ import { IdragUpdate, IDomRect } from "@/types/drag";
 
 import { puzzleSlots, puzzlePieces } from "@/datas";
 
-import { Puzzle, DragZone, DragZoneMarker } from "@/components/puzzle";
+import {
+  Puzzle,
+  DragZone,
+  DragZoneMarker,
+  PuzzleCompleteBlock,
+} from "@/components/puzzle";
 
 import lottieJson from "@/assets/animations/sparks.json";
 
@@ -42,14 +47,14 @@ const Home: NextPage<Props> = ({ slots, piecesCollection }) => {
   const { width } = useWindowSize();
 
   useEffect(() => {
-    setPieces(piecesCollection);
-  }, [piecesCollection]);
-
-  useEffect(() => {
     setUnitSize(
       isDesktop ? { unit: "px", size: "23" } : { unit: "vw", size: "4.5" }
     );
   }, [isDesktop]);
+
+  useEffect(() => {
+    setPieces(piecesCollection);
+  }, [piecesCollection]);
 
   useEffect(() => {
     if (pieces) {
@@ -63,7 +68,7 @@ const Home: NextPage<Props> = ({ slots, piecesCollection }) => {
     }
   }, [pieces]);
 
-  const handledropZonesDOMRects = (zoneBoundingArea: {
+  const handleDropZonesDOMRects = (zoneBoundingArea: {
     [key: string]: IDomRect;
   }) => {
     setdropZonesDOMRects((prev: any) => ({ ...prev, ...zoneBoundingArea }));
@@ -116,7 +121,6 @@ const Home: NextPage<Props> = ({ slots, piecesCollection }) => {
           <Puzzle isPuzzleComplete={isPuzzleComplete}>
             {isPuzzleComplete && (
               <motion.div
-                id="lottie"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200vw] h-[200vw] md:w-[800px] md:h-[800px]"
@@ -131,7 +135,7 @@ const Home: NextPage<Props> = ({ slots, piecesCollection }) => {
               </motion.div>
             )}
 
-            {/* Puzzle slots */}
+            {/* Slots */}
             {slots.layout.rows.map((row, i) => {
               return (
                 <div key={`row-${i}`} className="relative flex ">
@@ -150,20 +154,20 @@ const Home: NextPage<Props> = ({ slots, piecesCollection }) => {
                           height: `${unitSize.size}${unitSize.unit}`,
                         }}
                         className={clsx(
-                          `relative ${unit} ${
-                            unit && !unit.includes("bg-transparent")
-                              ? "bg-white"
-                              : ""
-                          }`,
+                          `relative ${unit} `,
+                          {
+                            "bg-white":
+                              unit && !unit.includes("bg-transparent"),
+                          },
                           {
                             "before:block before:absolute before:w-[3px] before:h-[3px] before:bg-black before:opacity-[0.15]":
                               unit.includes("patch"),
                           }
                         )}
                       >
-                        {/* Slot marker? */}
+                        {/* Marker? */}
                         {unit.includes("marker") && (
-                          <DragZoneMarker unit={unit} />
+                          <DragZoneMarker context="drop" unit={unit} />
                         )}
 
                         {/* Positionned dragzone? */}
@@ -179,7 +183,7 @@ const Home: NextPage<Props> = ({ slots, piecesCollection }) => {
                             isDisplayed={pieceItemData.isPositionned === true}
                             // isDisplayed={isPuzzleComplete}
                             isHoverItsDropzone={isHoverItsDropzone}
-                            handledropZonesDOMRects={handledropZonesDOMRects}
+                            handleDropZonesDOMRects={handleDropZonesDOMRects}
                             piece={pieceItemData as Ipieces}
                           />
                         )}
@@ -213,23 +217,7 @@ const Home: NextPage<Props> = ({ slots, piecesCollection }) => {
 
             {/* Completion block */}
             {isPuzzleComplete && (
-              <motion.div
-                initial={{ opacity: 0, y: "250%", x: "-50%" }}
-                animate={{ opacity: 1, y: "150%", x: "-50%" }}
-                transition={{ delay: 2 }}
-                id="completionBlock"
-                className="absolute left-1/2 -translate-x-1/2 bottom-0  w-[100vw] md:w-2/3 space-y-4 flex flex-col justify-center z-40"
-              >
-                <p className="text-4xl text-center md:text-3xl">Well done!</p>
-                <button className="mx-auto text-lg text-white duration-150 ease-out rounded shadow bg-magenta-500 hover:bg-magenta-700">
-                  <div
-                    onClick={() => handleResetPuzzle()}
-                    className="px-6 py-2 text-2xl w-full-h-full shadow-lt"
-                  >
-                    Restart
-                  </div>
-                </button>
-              </motion.div>
+              <PuzzleCompleteBlock handleResetPuzzle={handleResetPuzzle} />
             )}
           </Puzzle>
         )}
