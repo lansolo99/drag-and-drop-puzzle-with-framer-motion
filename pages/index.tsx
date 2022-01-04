@@ -103,6 +103,18 @@ const Home: NextPage<Props> = ({ slots, piecesCollection }) => {
     }
   };
 
+  const handleSetPuzzleFinished = () => {
+    setPieces((prev: any) => {
+      const newPieces = [...prev];
+      newPieces.forEach((piece: Ipieces) => {
+        piece.isPositionned = true;
+      });
+      return newPieces;
+    });
+
+    setIsPuzzleComplete(true);
+  };
+
   const handleResetPuzzle = () => {
     router.reload();
   };
@@ -116,7 +128,7 @@ const Home: NextPage<Props> = ({ slots, piecesCollection }) => {
       >
         {pieces && (
           <Puzzle isPuzzleComplete={isPuzzleComplete}>
-            {/* Lottie back animation */}
+            {/* Lottie complete animation */}
             {isPuzzleComplete && <PuzzleCompleteBackAnimation />}
 
             {/* Slots */}
@@ -164,8 +176,8 @@ const Home: NextPage<Props> = ({ slots, piecesCollection }) => {
                             isPuzzleComplete={isPuzzleComplete}
                             id={pieceItemData?.id}
                             width={width}
-                            // isDisplayed={pieceItemData.isPositionned === true}
-                            isDisplayed={isPuzzleComplete}
+                            isDisplayed={pieceItemData.isPositionned === true}
+                            // isDisplayed={isPuzzleComplete}
                             isHoverItsDropzone={isHoverItsDropzone}
                             handleDropZonesDOMRects={handleDropZonesDOMRects}
                             piece={pieceItemData as Ipieces}
@@ -191,8 +203,8 @@ const Home: NextPage<Props> = ({ slots, piecesCollection }) => {
                   isPuzzleComplete={isPuzzleComplete}
                   id={piece.id}
                   coords={piece.coords}
-                  // isDisplayed={piece.isPositionned === false}
-                  isDisplayed={!isPuzzleComplete}
+                  isDisplayed={piece.isPositionned === false}
+                  // isDisplayed={!isPuzzleComplete}
                   isHoverItsDropzone={isHoverItsDropzone}
                   handleOnDrag={handleOnDrag}
                 />
@@ -208,7 +220,8 @@ const Home: NextPage<Props> = ({ slots, piecesCollection }) => {
 
         {/* Finish puzzle helper */}
         <button
-          onClick={() => setIsPuzzleComplete(true)}
+          // onClick={() => setIsPuzzleComplete(true)}
+          onClick={() => handleSetPuzzleFinished()}
           disabled={isPuzzleComplete}
           className={clsx(
             "absolute p-[6px] top-[5px] left-[5px] shadow rounded-sm flex items-center justify-center w-8 h-8 text-white bg-magenta-500 duration-100 transition fill-current",
